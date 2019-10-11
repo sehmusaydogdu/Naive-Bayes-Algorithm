@@ -1,14 +1,17 @@
 import csv
+import math
+
 train_data   = []  ## set of 200 train data
 test_data    = []  ## set of 200 test  data
 train_label  = []  ## set of 200 train label data
 test_label   = []  ## set of 200 test  label data
+transponse=[]
 
-female_probality = []
+female_probability = []
 male_probability = []
 
-female = 0
-male = 0
+female = 0  ## 0.1
+male = 0    ## 0.9
 
 def read_csv_data(filename):
     try:
@@ -43,7 +46,7 @@ def read_label_data(filename):
     except csv.Error:
         print(f'Error reading {filename}')
 
-def label_data_probability():
+def train_label_probability():
     global  female
     global  male
     for item in train_label:
@@ -54,30 +57,63 @@ def label_data_probability():
     female = female / len(train_data)
     male = male / len(train_data)
 
+def probability_table(numbers):
+    female_list =[]
+    male_list   =[]
+
+    female_temp =[]
+    male_temp=[]
+
+    for index in range(len(numbers)):
+        if train_label[index] == 1:
+            female_list.append(numbers[index])
+        else:
+            male_list.append(numbers[index])
+
+    female_mean = list_mean(female_list)
+    female_varyans = list_varyans(female_list,female_mean)
+    female_temp.append(female_mean)
+    female_temp.append(female_varyans)
+    print(f'Female Mean = {female_mean}  Varyans ={female_varyans} ')
+    female_probability.append(female_temp)
+
+    male_mean = list_mean(male_list)
+    male_varyans = list_varyans(male_list,male_mean)
+    male_temp.append(male_mean)
+    male_temp.append(male_varyans)
+    print(f'Male Mean = {male_mean}  Varyans ={male_varyans} ')
+    male_probability.append(male_temp)
+
 def list_mean(numbers):
     total = 0
+    lenght = (len(numbers))
     for item in numbers:
         total = total +item
-    total = total / (len(numbers))
+    total = total / lenght
     return total
 
-def varyans(numbers):
-    mean = list_mean(numbers)
+def list_varyans(numbers,mean):
     total = 0
-    number_size = len(numbers)-1
+    number_size = len(numbers)
     for item in numbers:
         total += (((item-mean)*(item-mean))/number_size)
-    print (f'Varyans {total}')
+    return math.sqrt(total);
+
+def transponse_matrix():
+    transpose = list(zip(*train_data))
+    for row in transpose:
+        probability_table(row)
 
 if __name__ == '__main__':
-    data =[5,5,8,12,15,18]
-    varyans(data)
     read_csv_data("hw01_images.csv")
     read_label_data("hw01_labels.csv")
-    label_data_probability()
+
+    train_label_probability()
+    transponse_matrix()
+
     print(f'Global Female= {female} Male= {male}')
-    print(f"Train data size = {len(train_data)}  First data = {train_data.__getitem__(0)} ")
-    print(f"Test data size  = {len(test_data)}   First data = {test_data.__getitem__(0)} ")
+    print(f'Train data size = {len(train_data)}')
+    print(f'Test data size  = {len(test_data)} ')
 
     print(f"Train Label data size  = {len(train_label)}  {train_label}")
     print(f"Test  Label data size  = {len(test_label)}  {test_label}")
