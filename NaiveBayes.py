@@ -1,9 +1,6 @@
 import csv
 import math
 
-import decimal
-decimal.getcontext().prec = 50
-
 train_data   = []  ## set of 200 train data
 test_data    = []  ## set of 200 test  data
 train_label  = []  ## set of 200 train label data
@@ -103,7 +100,6 @@ def probability_log(numbers):
 
 def confusion_matrix(data , label, confusion_matrix):
     lenght = len(data)
-    letter = []
     for rowID in range(lenght):
         female_calculator = []
         male_calculator = []
@@ -118,19 +114,15 @@ def confusion_matrix(data , label, confusion_matrix):
         m_multiplaciton = probability_log(male_calculator) + math.log(male)
 
         if f_multiplaciton > m_multiplaciton:
-            letter.append(1)
             if label[rowID] == 1:
                 confusion_matrix[0][0] = confusion_matrix[0][0] + 1
             else:
                 confusion_matrix[0][1] = confusion_matrix[0][1] + 1
         else:
-            letter.append(2)
             if label[rowID] == 1:
                 confusion_matrix[1][0] = confusion_matrix[1][0] + 1
             else:
                 confusion_matrix[1][1] = confusion_matrix[1][1] + 1
-
-    return letter;
 
 def gauss_formula(data,mean,deviation):
     result = (1.0/(deviation*math.sqrt(2.0*math.pi)))*math.exp((-1.0)*math.pow((data-mean),2.0)/(2.0*math.pow(deviation,2.0)))
@@ -160,14 +152,10 @@ if __name__ == '__main__':
     transponse_matrix()
     print(f'Probability Female= {female} Male= {male}')
 
-    l1 = confusion_matrix(train_data, train_label, train_confusion_matrix)
-    print(l1)
-    print(train_label)
+    confusion_matrix(train_data, train_label, train_confusion_matrix)
     print(train_confusion_matrix)
     print(f'Train Accuracy : {(train_confusion_matrix[0][0] + train_confusion_matrix[1][1]) / len(train_data)}')
 
-    l2 = confusion_matrix(test_data, test_label, test_confusion_matrix)
-    print(l2)
-    print(test_label)
+    confusion_matrix(test_data, test_label, test_confusion_matrix)
     print(test_confusion_matrix)
     print(f'Test Accuracy : {(test_confusion_matrix[0][0] + test_confusion_matrix[1][1]) / len(test_data)}')
